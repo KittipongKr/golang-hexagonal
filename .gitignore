@@ -1,0 +1,22 @@
+# Ignore environment config file
+.env
+
+# Ignore all .env files
+.env*
+
+# Ignore ไฟล์เฉพาะชื่อ
+secret.txt
+config.json
+
+# Ignore ไฟล์นามสกุล
+*.log
+*.yml
+
+
+# Ignore โฟลเดอร์
+
+
+# Ignore ไฟล์ทุกอย่างในโฟลเดอร์
+
+
+# Ignore ไฟล์ระบบของ macOS
