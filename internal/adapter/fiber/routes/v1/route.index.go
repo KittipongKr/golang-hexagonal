@@ -7,7 +7,7 @@ import (
 )
 
 type V1 struct {
-	Ping fCtls.PingCtls
+	Auth fCtls.AuthCtls
 	User fCtls.UserCtls
 }
 
@@ -15,9 +15,11 @@ func IndexRoute(app fiber.Router, ctls *V1) {
 	// NOTE: grouping api v1
 	v1 := app.Group("/v1")
 	{
-		ping := v1.Group("/ping")
+		auth := v1.Group("/auth")
 		{
-			ping.Get("/", ctls.Ping.GetPongEndpoint)
+			auth.Post("/one", ctls.Auth.OneAuthEndpoint)
+			auth.Post("/refresh", nil)
+			auth.Post("/logout", nil)
 		}
 
 		user := v1.Group("/users")
@@ -25,6 +27,7 @@ func IndexRoute(app fiber.Router, ctls *V1) {
 			user.Post("/", ctls.User.CreateUserEndpoint)
 			user.Get("/", ctls.User.GetAllUserEndpoint)
 		}
+
 	}
 
 }

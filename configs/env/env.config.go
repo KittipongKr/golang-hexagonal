@@ -1,9 +1,11 @@
 package configs_env
 
 import (
+	"csat-servay/pkg/logs"
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -16,6 +18,20 @@ func ReadEnv(serverZone string) *EnvConfig {
 		log.Printf("File not found %s, ", file)
 	} else {
 		log.Printf("Success to read %s", file)
+	}
+
+	expAccessStr := os.Getenv("JWT_ACCESS_EXP")
+	expAccess, err := strconv.ParseInt(expAccessStr, 10, 64)
+	if err != nil {
+		logs.Error(err)
+		expAccess = 900
+	}
+
+	expRefreshStr := os.Getenv("JWT_REFRESH_EXP")
+	expRefresh, err := strconv.ParseInt(expRefreshStr, 10, 64)
+	if err != nil {
+		logs.Error(err)
+		expRefresh = 3600
 	}
 
 	environments = &EnvConfig{
@@ -36,6 +52,17 @@ func ReadEnv(serverZone string) *EnvConfig {
 			Host:     os.Getenv("MONGO_HOST"),
 			Port:     os.Getenv("MONGO_PORT"),
 			Database: os.Getenv("MONGO_BASE"),
+		},
+		One: OneConfig{
+			URL:          os.Getenv("ONE_URL"),
+			GrantType:    os.Getenv("ONE_GRANT_TYPE"),
+			ClientID:     os.Getenv("ONE_CLIENT_ID"),
+			ClientSecret: os.Getenv("ONE_CLIENT_SECRET"),
+		},
+		Jwt: JwtConfig{
+			HMACSecret: os.Getenv("JWT_HMAC_SECRET"),
+			AccessExp:  expAccess,
+			RefreshExp: expRefresh,
 		},
 	}
 

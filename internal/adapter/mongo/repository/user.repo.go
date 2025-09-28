@@ -11,20 +11,21 @@ import (
 	"github.com/davecgh/go-spew/spew"
 	"github.com/jinzhu/copier"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type userRepo struct {
-	userCol *m.MongoCollections
+	user *mongo.Collection
 }
 
-func NewUserRepo(userCol *m.MongoCollections) p.UserRepo {
+func NewUserRepo(user *mongo.Collection) p.UserRepo {
 	return userRepo{
-		userCol: userCol,
+		user: user,
 	}
 }
 
 // NOTE: insert new user repository
-func (u userRepo) InsertNew(user *d.User) (*d.User, error) {
+func (r userRepo) InsertNew(user *d.User) (*d.User, error) {
 	ctx := context.Background()
 
 	newUser := &m.Users{}
@@ -33,7 +34,7 @@ func (u userRepo) InsertNew(user *d.User) (*d.User, error) {
 
 	spew.Dump(newUser)
 
-	if _, err := u.userCol.Users.InsertOne(ctx, &newUser); err != nil {
+	if _, err := r.user.InsertOne(ctx, &newUser); err != nil {
 		return nil, err
 	}
 
@@ -42,12 +43,12 @@ func (u userRepo) InsertNew(user *d.User) (*d.User, error) {
 	return user, nil
 }
 
-func (u userRepo) InsertMany(user []d.User) ([]d.User, error) {
+func (r userRepo) InsertMany(user []d.User) ([]d.User, error) {
 	return nil, nil
 }
 
 // NOTE: find user repository
-func (u userRepo) FindAll(cond map[string]interface{}, user *[]d.User) error {
+func (r userRepo) FindAll(cond map[string]interface{}, user *[]d.User) error {
 	ctx := context.Background()
 
 	filter := bson.M{}
@@ -55,7 +56,7 @@ func (u userRepo) FindAll(cond map[string]interface{}, user *[]d.User) error {
 		filter = h.BuildQuery(cond)
 	}
 
-	cursor, err := u.userCol.Users.Find(ctx, filter)
+	cursor, err := r.user.Find(ctx, filter)
 	if err != nil {
 		return err
 	}

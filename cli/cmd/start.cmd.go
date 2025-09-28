@@ -4,13 +4,16 @@ import (
 	"log"
 
 	envCfgs "csat-servay/configs/env"
-	cFiber "csat-servay/internal/adapter/fiber/controllers"
+	"csat-servay/internal/adapter/calls"
 	rFiber "csat-servay/internal/adapter/fiber/routes"
-	rFiberV1 "csat-servay/internal/adapter/fiber/routes/v1"
+	mongo "csat-servay/internal/adapter/mongo"
 	mongoCfgs "csat-servay/internal/adapter/mongo"
-	repo "csat-servay/internal/adapter/mongo/repository"
-	serv "csat-servay/internal/core/service"
 
+	// arch "csat-servay/internal/core"
+	core "csat-servay/internal/core"
+	"csat-servay/pkg/logs"
+
+	"github.com/go-resty/resty/v2"
 	"github.com/spf13/cobra"
 )
 
@@ -33,24 +36,23 @@ var startCommand = &cobra.Command{
 			log.Fatalf("Failed to connect to mongo database: %v", err)
 		}
 
-		//NOTE: new module repository
-		userRepo := repo.NewUserRepo(mongoCols)
+		//NOTE: launch zap logger
+		logs.Launch()
 
-		//NOTE: new module service
-		userServ := serv.NewUserServ(userRepo)
-
-		// NOTE: new module controller
-		pingCtls := cFiber.NewPingCtl()
-		userCtls := cFiber.NewUserCtls(userServ)
+		//NOTE: core - hexagonal architecture
+		handler := core.SetHandlers(
+			core.SetAdaptors(
+				*env,
+				core.Adaptor{
+					MongoAdaptor: mongo.SetAdaptor(mongoCols),
+					CallsAdaptor: calls.SetAdaptor(resty.New(), *env),
+				},
+			),
+		)
 
 		// NOTE: launch go fiber server
 		if err := rFiber.Launch(
-			rFiber.FiberRoute(&env.Fiber, &rFiber.Controller{
-				V1: rFiberV1.V1{
-					Ping: pingCtls,
-					User: userCtls,
-				},
-			}),
+			rFiber.FiberRoute(&env.Fiber, &handler.Router),
 		); err != nil {
 			log.Fatalf("Failed to start server: %v", err)
 		}

@@ -4,6 +4,8 @@ type EnvConfig struct {
 	App   AppConfig
 	Fiber FiberConfig
 	Mongo MongoConfig
+	One   OneConfig
+	Jwt   JwtConfig
 }
 
 type AppConfig struct {
@@ -25,4 +27,17 @@ type MongoConfig struct {
 	Host     string
 	Port     string
 	Database string
+}
+
+type OneConfig struct {
+	URL          string
+	GrantType    string
+	ClientID     string
+	ClientSecret string
+}
+
+type JwtConfig struct {
+	HMACSecret string
+	AccessExp  int64
+	RefreshExp int64
 }
