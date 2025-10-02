@@ -8,7 +8,7 @@ import (
 type UserRepo interface {
 	// NOTE: insert new user repository
 	InsertNew(user *d.User) (*d.User, error)
-	InsertMany(user []d.User) ([]d.User, error)
+	InsertMany(user []d.User) error
 	// NOTE: find user repository
 	FindAll(cond map[string]interface{}, user *[]d.User) error
 }
@@ -17,7 +17,8 @@ type UserRepo interface {
 type UserServ interface {
 	// NOTE: insert new user service
 	CreateNewService(user *d.User) (*d.User, error)
-	CreateManyService(user []d.User) ([]d.User, error)
+	CreateManyService(user []d.User) error
+	DumpRaService() error
 	// NOTE: find user repository
 	GetAllService() (*[]d.User, error)
 }

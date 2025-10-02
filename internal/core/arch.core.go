@@ -31,6 +31,7 @@ func SetAdaptors(envCfgs envCfgs.EnvConfig, a Adaptor) BusinessLogic {
 		),
 		User: service.NewUserServ(
 			a.MongoAdaptor.User,
+			a.CallsAdaptor.Ra,
 		),
 	}
 }

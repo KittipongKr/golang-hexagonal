@@ -24,7 +24,9 @@ func IndexRoute(app fiber.Router, ctls *V1) {
 
 		user := v1.Group("/users")
 		{
+
 			user.Post("/", ctls.User.CreateUserEndpoint)
+			user.Post("/bulnk/ra", ctls.User.DumpRaUserEndpoint)
 			user.Get("/", ctls.User.GetAllUserEndpoint)
 		}
 

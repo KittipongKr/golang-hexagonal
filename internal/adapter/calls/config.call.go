@@ -14,6 +14,7 @@ func SetRrestyClient() *resty.Client {
 
 type Adaptor struct {
 	One p.OneCall
+	Ra  p.RaCall
 }
 
 func SetAdaptor(
@@ -21,5 +22,6 @@ func SetAdaptor(
 	cfgs envCfgs.EnvConfig) Adaptor {
 	return Adaptor{
 		One: calls.NewOneCall(client, cfgs.One),
+		Ra:  calls.NewRaCall(client, cfgs.Ra),
 	}
 }

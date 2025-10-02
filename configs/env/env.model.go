@@ -5,6 +5,7 @@ type EnvConfig struct {
 	Fiber FiberConfig
 	Mongo MongoConfig
 	One   OneConfig
+	Ra    RaConfig
 	Jwt   JwtConfig
 }
 
@@ -34,6 +35,11 @@ type OneConfig struct {
 	GrantType    string
 	ClientID     string
 	ClientSecret string
+}
+
+type RaConfig struct {
+	URL         string
+	TokenSearch string
 }
 
 type JwtConfig struct {
