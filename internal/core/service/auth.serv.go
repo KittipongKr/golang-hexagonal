@@ -4,8 +4,8 @@ import (
 	envCfgs "csat-servay/configs/env"
 	d "csat-servay/internal/core/domain"
 	p "csat-servay/internal/core/port"
-	"csat-servay/pkg/jwt"
-	"csat-servay/pkg/logs"
+	jwt "csat-servay/pkg/jwt"
+	logs "csat-servay/pkg/logs"
 )
 
 type authServ struct {

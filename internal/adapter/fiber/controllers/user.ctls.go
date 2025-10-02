@@ -45,6 +45,14 @@ func (u UserCtls) CreateUserEndpoint(c *fiber.Ctx) error {
 	return hp.SuccessResponse(c, user)
 }
 
+func (u UserCtls) DumpRaUserEndpoint(c *fiber.Ctx) error {
+	if err := u.userServ.DumpRaService(); err != nil {
+		logs.Error(err)
+		return hp.FailedResponse(c, errs.ErrInternalServer.Message, fiber.StatusInternalServerError)
+	}
+	return hp.SuccessResponse(c, nil)
+}
+
 // NOTE: get user controllers
 func (u UserCtls) GetAllUserEndpoint(c *fiber.Ctx) error {
 	user, err := u.userServ.GetAllService()

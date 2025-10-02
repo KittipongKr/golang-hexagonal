@@ -59,6 +59,10 @@ func ReadEnv(serverZone string) *EnvConfig {
 			ClientID:     os.Getenv("ONE_CLIENT_ID"),
 			ClientSecret: os.Getenv("ONE_CLIENT_SECRET"),
 		},
+		Ra: RaConfig{
+			URL:         os.Getenv("RA_URL"),
+			TokenSearch: os.Getenv("RA_SEARCHALL_SECRET"),
+		},
 		Jwt: JwtConfig{
 			HMACSecret: os.Getenv("JWT_HMAC_SECRET"),
 			AccessExp:  expAccess,

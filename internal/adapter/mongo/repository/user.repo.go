@@ -28,7 +28,7 @@ func NewUserRepo(user *mongo.Collection) p.UserRepo {
 func (r userRepo) InsertNew(user *d.User) (*d.User, error) {
 	ctx := context.Background()
 
-	newUser := &m.Users{}
+	newUser := &m.User{}
 	copier.Copy(newUser, user)
 	newUser.SetInsertMeta()
 
@@ -43,8 +43,22 @@ func (r userRepo) InsertNew(user *d.User) (*d.User, error) {
 	return user, nil
 }
 
-func (r userRepo) InsertMany(user []d.User) ([]d.User, error) {
-	return nil, nil
+func (r userRepo) InsertMany(users []d.User) error {
+	ctx := context.Background()
+
+	userModels := make([]interface{}, 0, len(users))
+	for _, user := range users {
+		newUser := m.User{}
+		copier.Copy(&newUser, &user)
+		newUser.SetInsertMeta()
+		userModels = append(userModels, newUser)
+	}
+
+	if _, err := r.user.InsertMany(ctx, userModels); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // NOTE: find user repository
@@ -61,7 +75,7 @@ func (r userRepo) FindAll(cond map[string]interface{}, user *[]d.User) error {
 		return err
 	}
 
-	result := []m.Users{}
+	result := []m.User{}
 	if err := cursor.All(ctx, &result); err != nil {
 		return err
 	}
