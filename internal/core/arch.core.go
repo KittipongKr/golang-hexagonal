@@ -8,7 +8,7 @@ import (
 	rFiberV1 "csat-servay/internal/adapter/fiber/routes/v1"
 	mongo "csat-servay/internal/adapter/mongo"
 	p "csat-servay/internal/core/port"
-	"csat-servay/internal/core/service"
+	serv "csat-servay/internal/core/service"
 )
 
 type Adaptor struct {
@@ -17,21 +17,14 @@ type Adaptor struct {
 }
 
 type BusinessLogic struct {
-	Auth p.AuthServ
-	User p.UserServ
+	PingServ p.PingServ
 }
 
 func SetAdaptors(envCfgs envCfgs.EnvConfig, a Adaptor) BusinessLogic {
 	return BusinessLogic{
-		Auth: service.NewAuthServ(
-			envCfgs.App,
-			envCfgs.Jwt,
-			a.MongoAdaptor.User,
-			a.CallsAdaptor.One,
-		),
-		User: service.NewUserServ(
-			a.MongoAdaptor.User,
-			a.CallsAdaptor.Ra,
+		PingServ: serv.NewPingServ(
+			a.MongoAdaptor.PingRepo,
+			a.CallsAdaptor.Jsonplaceholder,
 		),
 	}
 }
@@ -46,8 +39,7 @@ func SetHandlers(
 	return Handler{
 		Router: rFiber.Controller{
 			V1: rFiberV1.V1{
-				Auth: cFiber.NewAuthCtls(logic.Auth),
-				User: cFiber.NewUserCtls(logic.User),
+				Ping: cFiber.NewPingCtls(logic.PingServ),
 			},
 		},
 	}

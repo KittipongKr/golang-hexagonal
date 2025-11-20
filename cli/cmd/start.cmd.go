@@ -4,10 +4,9 @@ import (
 	"log"
 
 	envCfgs "csat-servay/configs/env"
-	"csat-servay/internal/adapter/calls"
+	calls "csat-servay/internal/adapter/calls"
 	rFiber "csat-servay/internal/adapter/fiber/routes"
 	mongo "csat-servay/internal/adapter/mongo"
-	mongoCfgs "csat-servay/internal/adapter/mongo"
 
 	// arch "csat-servay/internal/core"
 	core "csat-servay/internal/core"
@@ -31,7 +30,7 @@ var startCommand = &cobra.Command{
 		env := envCfgs.ReadEnv(zone)
 
 		//NOTE: connect to mongo database
-		mongoCols, err := mongoCfgs.Connect(&env.Mongo)
+		mongoCols, err := mongo.Connect(&env.Mongo)
 		if err != nil {
 			log.Fatalf("Failed to connect to mongo database: %v", err)
 		}

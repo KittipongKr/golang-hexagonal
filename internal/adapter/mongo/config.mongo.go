@@ -6,7 +6,7 @@ import (
 
 	envCfgs "csat-servay/configs/env"
 	m "csat-servay/internal/adapter/mongo/model"
-	"csat-servay/internal/adapter/mongo/repository"
+	r "csat-servay/internal/adapter/mongo/repository"
 	p "csat-servay/internal/core/port"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -35,11 +35,11 @@ func Connect(cfgs *envCfgs.MongoConfig) (*m.MongoCollections, error) {
 }
 
 type Adaptor struct {
-	User p.UserRepo
+	PingRepo p.PingRepo
 }
 
 func SetAdaptor(collections *m.MongoCollections) Adaptor {
 	return Adaptor{
-		User: repository.NewUserRepo(collections.Users),
+		PingRepo: r.NewPingRepo(),
 	}
 }
