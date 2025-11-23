@@ -9,6 +9,8 @@ import (
 	mongo "csat-servay/internal/adapter/mongo"
 	p "csat-servay/internal/core/port"
 	serv "csat-servay/internal/core/service"
+
+	"go.opentelemetry.io/otel/trace"
 )
 
 type Adaptor struct {
@@ -20,9 +22,14 @@ type BusinessLogic struct {
 	PingServ p.PingServ
 }
 
-func SetAdaptors(envCfgs envCfgs.EnvConfig, a Adaptor) BusinessLogic {
+func SetAdaptors(
+	tp trace.TracerProvider,
+	envCfgs envCfgs.EnvConfig,
+	a Adaptor,
+) BusinessLogic {
 	return BusinessLogic{
 		PingServ: serv.NewPingServ(
+			tp,
 			a.MongoAdaptor.PingRepo,
 			a.CallsAdaptor.Jsonplaceholder,
 		),
@@ -34,12 +41,13 @@ type Handler struct {
 }
 
 func SetHandlers(
+	tp trace.TracerProvider,
 	logic BusinessLogic,
 ) Handler {
 	return Handler{
 		Router: rFiber.Controller{
 			V1: rFiberV1.V1{
-				Ping: cFiber.NewPingCtls(logic.PingServ),
+				Ping: cFiber.NewPingCtls(tp, logic.PingServ),
 			},
 		},
 	}

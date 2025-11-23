@@ -1,5 +1,7 @@
 package port
 
+import "context"
+
 type JsonplaceholderApi interface {
-	TestGetEndpoint() error
+	TestGetEndpoint(ctx context.Context) error
 }

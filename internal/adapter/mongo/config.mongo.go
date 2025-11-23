@@ -1,26 +1,39 @@
 package mongo
 
 import (
-	"context"
 	"fmt"
+	"time"
 
 	envCfgs "csat-servay/configs/env"
 	m "csat-servay/internal/adapter/mongo/model"
 	r "csat-servay/internal/adapter/mongo/repository"
 	p "csat-servay/internal/core/port"
 
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
+	"go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/v2/mongo/otelmongo"
+	"go.opentelemetry.io/otel/trace"
 )
 
-func Connect(cfgs *envCfgs.MongoConfig) (*m.MongoCollections, error) {
+func Connect(cfgs *envCfgs.MongoConfig, tp trace.TracerProvider) (*m.MongoCollections, error) {
 	dsn := fmt.Sprintf("mongodb://%s:%s/",
 		cfgs.Host,
 		cfgs.Port,
 	)
+	// opts := options.Client().ApplyURI(dsn)
+	opts := options.Client()
+	opts.ApplyURI(dsn)
+	// Set timeout
+	opts.SetConnectTimeout(10 * time.Second)
+	opts.SetTimeout(10 * time.Second)
+	// Set tracing monitor
+	if tp != nil {
+		opts.SetMonitor(
+			otelmongo.NewMonitor(otelmongo.WithTracerProvider(tp)),
+		)
+	}
 
-	opts := options.Client().ApplyURI(dsn)
-	client, err := mongo.Connect(context.Background(), opts)
+	client, err := mongo.Connect(opts)
 	if err != nil {
 		return nil, err
 	}

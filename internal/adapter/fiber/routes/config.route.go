@@ -3,14 +3,17 @@ package fiber_routes
 import (
 	envCfgs "csat-servay/configs/env"
 	v1 "csat-servay/internal/adapter/fiber/routes/v1"
+	"csat-servay/internal/adapter/fiber/tracer"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
+	"go.opentelemetry.io/otel/trace"
 )
 
-func FiberRoute(cfgs *envCfgs.FiberConfig, ctls *Controller) *FiberServer {
+func FiberRoute(cfgs *envCfgs.FiberConfig, ctls *Controller, tp trace.TracerProvider) *FiberServer {
 	app := fiber.New()
+	app.Use(tracer.FiberTrace(tp, nil))
 
 	var credentialBool = map[string]bool{
 		"true":  true,

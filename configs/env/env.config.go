@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -18,9 +19,21 @@ func ReadEnv(serverZone string) *EnvConfig {
 		log.Printf("Success to read %s", file)
 	}
 
+	jwtAccessExp, err := strconv.Atoi(os.Getenv("JWT_ACCESS_EXP"))
+	if err != nil {
+		log.Printf("Error parsing JWT_ACCESS_EXP: %v", err)
+	}
+
+	jwtRefreshExp, err := strconv.Atoi(os.Getenv("JWT_REFRESH_EXP"))
+	if err != nil {
+		log.Printf("Error parsing JWT_REFRESH_EXP: %v", err)
+	}
+
 	environments = &EnvConfig{
 		App: AppConfig{
-			AppName: os.Getenv("APP_NAME"),
+			AppName:     os.Getenv("APP_NAME"),
+			Version:     os.Getenv("APP_VERSION"),
+			Environment: os.Getenv("APP_ENV"),
 		},
 		Fiber: FiberConfig{
 			Host:             os.Getenv("FIBER_HOST"),
@@ -36,6 +49,15 @@ func ReadEnv(serverZone string) *EnvConfig {
 			Host:     os.Getenv("MONGO_HOST"),
 			Port:     os.Getenv("MONGO_PORT"),
 			Database: os.Getenv("MONGO_BASE"),
+		},
+		Jwt: JwtConfig{
+			HMACSecret: os.Getenv("JWT_HMAC_SECRET"),
+			AccessExp:  jwtAccessExp,
+			RefreshExp: jwtRefreshExp,
+		},
+		Tracer: TracerConfig{
+			Host: os.Getenv("TRACING_HOST"),
+			Port: os.Getenv("TRACING_PORT"),
 		},
 	}
 

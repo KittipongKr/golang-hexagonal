@@ -1,0 +1,29 @@
+services:
+  mongo:
+    image: mongo:8
+    restart: always
+    ports:
+      - "127.0.0.1:27018:27018"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: user_mongo
+      MONGO_INITDB_ROOT_PASSWORD: JIX6dneXEvv
+      MONGO_INITDB_DATABASE: csat
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+    command: redis-server --requirepass JIX6dneXEvv
+    ports:
+      - "127.0.0.1:6378:6378"
+
+  jaeger:
+    image: cr.jaegertracing.io/jaegertracing/jaeger:2.8.0
+    restart: always
+    ports:
+      - "127.0.0.1:4317:4317"
+      - "127.0.0.1:16686:16686"
+
+volumes:
+  mongodb_data:

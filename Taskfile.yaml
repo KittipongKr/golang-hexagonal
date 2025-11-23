@@ -1,0 +1,28 @@
+version: "3"
+
+tasks:
+  dev:
+    desc: "Start development server"
+    cmd: go run cli/main.go start --zone dev
+  swaggag:
+    desc: "Initailize swagger"
+    cmds:
+      - swag init -g internal/adapter/fiber/fiber.routes.go --parseDependency --parseInternal
+      - swag fmt
+  lint:
+    desc: "Run linter"
+    cmd: golangci-lint run ./...
+  swag:
+    desc: "Generate swagger docs"
+    cmds:
+      - swag fmt
+      - swag init -g internal/adapter/fiber/fiber.routes.go
+  test:
+    desc: "Run tests"
+    cmd: go test -v ./...
+  build:
+    desc: "Build docker image"
+    cmd: docker build -t test_carbon_api .
+  run:
+    desc: "Start docker container"
+    cmd: docker run --env-file ./.env -p 5000:5000 test_carbon_api

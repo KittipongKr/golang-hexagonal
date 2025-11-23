@@ -1,16 +1,17 @@
 package configs_env
 
 type EnvConfig struct {
-	App   AppConfig
-	Fiber FiberConfig
-	Mongo MongoConfig
-	One   OneConfig
-	Ra    RaConfig
-	Jwt   JwtConfig
+	App    AppConfig
+	Fiber  FiberConfig
+	Mongo  MongoConfig
+	Jwt    JwtConfig
+	Tracer TracerConfig
 }
 
 type AppConfig struct {
-	AppName string
+	AppName     string
+	Version     string
+	Environment string
 }
 
 type FiberConfig struct {
@@ -30,20 +31,13 @@ type MongoConfig struct {
 	Database string
 }
 
-type OneConfig struct {
-	URL          string
-	GrantType    string
-	ClientID     string
-	ClientSecret string
-}
-
-type RaConfig struct {
-	URL         string
-	TokenSearch string
-}
-
 type JwtConfig struct {
 	HMACSecret string
-	AccessExp  int64
-	RefreshExp int64
+	AccessExp  int
+	RefreshExp int
+}
+
+type TracerConfig struct {
+	Host string
+	Port string
 }

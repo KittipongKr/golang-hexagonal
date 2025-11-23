@@ -1,10 +1,12 @@
 package port
 
+import "context"
+
 type PingRepo interface {
 	GetPongRepo() (string, error)
 }
 
 type PingServ interface {
-	GetPongService() (string, error)
-	GetJsonplaceholderService() error
+	GetPongService(ctx context.Context) (string, error)
+	GetJsonplaceholderService(ctx context.Context) error
 }
